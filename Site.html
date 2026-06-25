@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT Портал</title>
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #fafafa;
+    color: #111;
+}
+.wrapper {
+    max-width: 1100px;
+    margin: auto;
+    background: white;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+}
+header {
+    background: #005f99;
+    color: white;
+    padding: 14px 20px;
+    font-weight: 600;
+    font-size: 24px;
+    text-align: center;
+}
+
+.banner {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+.banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+nav {
+    background: #f5f7f9;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #ddd;
+}
+nav button {
+    background: transparent;
+    border: none;
+    padding: 8px 14px;
+    font-size: 14px;
+    cursor: pointer;
+    color: #555;
+    border-radius: 4px;
+    transition: background-color 0.25s, color 0.25s;
+}
+nav button.active,
+nav button:hover { background-color: #005f99; color: white; }
+.search input {
+    padding: 6px 12px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid #bbb;
+    width: 200px;
+}
+.search input:focus { border-color: #005f99; outline: none; }
+
+.authors-bar {
+    background: #f5f7f9;
+    display: flex;
+    gap: 20px;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd;
+}
+.authors-label { font-weight: 600; font-size: 14px; border-right: 1px solid #ccc; padding-right: 10px; }
+.authors-list { display: flex; gap: 12px; align-items: center; }
+.authors-list img { width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #bbb; }
+.authors-list img:hover { border-color: #005f99; }
+
+.layout {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    gap: 20px;
+    padding: 20px;
+}
+
+.article { padding-bottom: 20px; margin-bottom: 25px; border-bottom: 1px solid #eee; }
+.article h2 { color: #005f99; margin: 5px 0 12px; font-weight: 600; font-size: 20px; }
+.article-content { display: flex; gap: 15px; }
+.article-content img { width: 200px; height: 120px; object-fit: cover; border-radius: 6px; }
+.article p { font-size: 14px; line-height: 1.4; margin: 0; }
+.author { display: flex; align-items: center; font-size: 13px; margin-bottom: 5px; gap: 10px; color: #333; }
+.author img { width: 35px; height: 35px; border-radius: 50%; }
+.like-btn { margin-left: auto; display: flex; align-items: center; cursor: pointer; font-size: 14px; color: #005f99; }
+.like-btn span { margin-left: 6px; }
+.comments { margin-top: 12px; }
+.comment { display: flex; align-items: center; font-size: 13px; margin-top: 6px; gap: 8px; }
+.comment img { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; }
+.comment div { background: #f0f3f7; padding: 5px 9px; border-radius: 6px; word-break: break-word; max-width: 90%; }
+.add-comment { margin-top: 12px; display: flex; gap: 10px; }
+.add-comment input { flex-grow: 1; padding: 7px 10px; font-size: 14px; border-radius: 6px; border: 1px solid #ccc; }
+.add-comment input:focus { border-color: #005f99; outline: none; }
+.add-comment button { padding: 7px 14px; font-size: 14px; background: #005f99; border: none; color: white; border-radius: 6px; cursor: pointer; }
+.add-comment button:hover { background: #003f66; }
+
+.top-cards { display: flex; flex-direction: column; gap: 15px; background: #f5f7f9; padding: 10px; border-radius: 6px; }
+.top-card { display: flex; flex-direction: column; align-items: center; cursor: default; }
+.top-card img { width: 100%; height: 80px; object-fit: cover; border-radius: 6px; margin-bottom: 5px; }
+.top-card span { font-size: 14px; font-weight: 500; color: #005f99; text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+<header>Жаңа буын технологиялары</header>
+<div class="banner">
+    <img src="https://kartinki.pics/uploads/posts/2021-01/1611023050_5-p-fon-it-12.jpg" alt="Баннер">
+</div>
+
+
+<nav id="categoryNav">
+    <button class="active" onclick="filterCategory('all', this)">Барлығы</button>
+    <button onclick="filterCategory('programming', this)">Бағдарламалау</button>
+    <button onclick="filterCategory('tech', this)">Технологиялар</button>
+    <button onclick="filterCategory('webdesign', this)">Веб-дизайн</button>
+    <button onclick="filterCategory('ai', this)">Жасанды интеллект</button>
+    <div class="search" style="margin-left:auto;">
+        <input type="text" id="searchInput" placeholder="Іздеу...">
+    </div>
+</nav>
+
+<div class="authors-bar" id="authorsBar"></div>
+
+<div class="layout">
+<main id="articles">
+
+<div class="article" data-category="programming" data-author="Иван Иванов">
+    <div class="author">
+        <img src="https://randomuser.me/api/portraits/men/11.jpg" alt="Иван Иванов">Иван Иванов
+        <div class="like-btn" onclick="toggleLike(this)">👍 <span>0</span></div>
+    </div>
+    <h2>Java 21 жаңалықтары</h2>
+    <div class="article-content">
+        <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c" alt="Java">
+        <p>Java 21 синтаксисті жеңілдететін және қосымшалардың өнімділігін арттыратын жаңа функциялар енгізеді.</p>
+    </div>
+    <div class="comments" data-article-id="1"></div>
+    <div class="add-comment">
+        <input type="text" placeholder="Пікір қосу..." onkeydown="if(event.key==='Enter'){addComment('1', this)}">
+        <button onclick="addComment('1', this.previousElementSibling)">Қосу</button>
+    </div>
+</div>
+
+<div class="article" data-category="programming" data-author="Павел Сидоров">
+    <div class="author">
+        <img src="https://randomuser.me/api/portraits/men/12.jpg" alt="Павел Сидоров">Павел Сидоров
+        <div class="like-btn" onclick="toggleLike(this)">👍 <span>0</span></div>
+    </div>
+    <h2>Бастаушыларға Python</h2>
+    <div class="article-content">
+        <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085" alt="Python">
+        <p>Python қарапайымдылығы мен әмбебаптығы арқасында ең танымал бағдарламалау тілдерінің бірі болып қала береді.</p>
+    </div>
+    <div class="comments" data-article-id="2"></div>
+    <div class="add-comment">
+        <input type="text" placeholder="Пікір қосу..." onkeydown="if(event.key==='Enter'){addComment('2', this)}">
+        <button onclick="addComment('2', this.previousElementSibling)">Қосу</button>
+    </div>
+</div>
+
+<div class="article" data-category="programming" data-author="Ольга Белова">
+    <div class="author">
+        <img src="https://randomuser.me/api/portraits/women/61.jpg" alt="Ольга Белова">Ольга Белова
+        <div class="like-btn" onclick="toggleLike(this)">👍 <span>0</span></div>
+    </div>
+    <h2>C# 10 кіріспе</h2>
+    <div class="article-content">
+        <img src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4" alt="C#">
+        <p>C# 10 заманауи қосымшаларды .NET платформасында жасау үшін жаңа мүмкіндіктер қосады.</p>
+    </div>
+    <div class="comments" data-article-id="3"></div>
+    <div class="add-comment">
+        <input type="text" placeholder="Пікір қосу..." onkeydown="if(event.key==='Enter'){addComment('3', this)}">
+        <button onclick="addComment('3', this.previousElementSibling)">Қосу</button>
+    </div>
+</div>
+
+<div class="article" data-category="tech" data-author="Екатерина Петрова">
+    <div class="author">
+        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Екатерина Петрова">Екатерина Петрова
+        <div class="like-btn" onclick="toggleLike(this)">👍 <span>0</span></div>
+    </div>
+    <h2>Бұлтты есептеу жаңа технологиялары</h2>
+    <div class="article-content">
+        <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8" alt="Cloud Tech">
+        <p>Бұлттық платформалар автоматтандыру мен қауіпсіздікті арттыра отырып дамуда.</p>
+    </div>
+    <div class="comments" data-article-id="4"></div>
+    <div class="add-comment">
+        <input type="text" placeholder="Пікір қосу..." onkeydown="if(event.key==='Enter'){addComment('4', this)}">
+        <button onclick="addComment('4', this.previousElementSibling)">Қосу</button>
+    </div>
+</div>
+
+<div class="article" data-category="tech" data-author="Игорь Михайлов">
+    <div class="author">
+        <img src="https://randomuser.me/api/portraits/men/55.jpg" alt="Игорь Михайлов">Игорь Михайлов
+        <div class="like-btn" onclick="toggleLike(this)">👍 <span>0</span></div>
+    </div>
+    <h2>5G және мобильді байланыс болашағы</h2>
+    <div class="article-content">
+        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475" alt="5G">
+        <p>5G желілері жоғары жылдамдықтағы интернет және IoT үшін жаңа мүмкіндіктер ұсынады.</p>
+    </div>
+    <div class="comments" data-article-id="5"></div>
+    <div class="add-comment">
+        <input type="text" placeholder="Пікір қосу..." onkeydown="if(event.key==='Enter'){addComment('5', this)}">
+        <button onclick="addComment('5', this.previousElementSibling)">Қосу</button>
+    </div>
+</div>
+
+<div class="article" data-category="tech" data-author="Ольга Белова">
+    <div class="author">
+        <img src="https://randomuser.me/api/portraits/women/61.jpg" alt="Ольга Белова">Ольга Белова
+        <div class="like-btn" onclick="toggleLike(this)">👍 <span>0</span></div>
+    </div>
+    <h2>IoT 2025</h2>
+    <div class="article-content">
+        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475" alt="IoT">
+        <p>IoT күнделікті өмірге интеграциялануда, ақылды үйлерден өнеркәсіптік шешімдерге дейін.</p>
+    </div>
+    <div class="comments" data-article-id="6"></div>
+    <div class="add-comment">
+        <input type="text" placeholder="Пікір қосу..." onkeydown="if(event.key==='Enter'){addComment('6', this)}">
+        <button onclick="addComment('6', this.previousElementSibling)">Қосу</button>
+    </div>
+</div>
+
+<div class="article" data-category="webdesign" data-author="Ирина Смирнова">
+    <div class="author">
+        <img src="https://randomuser.me/api/portraits/women/25.jpg" alt="Ирина Смирнова">Ирина Смирнова
+        <div class="like-btn" onclick="toggleLike(this)">👍 <span>0</span></div>
+    </div>
+    <h2>2025 веб-дизайн трендтері</h2>
+    <div class="article-content">
+        <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085" alt="Web Design">
+        <p>Қазіргі веб-дизайн минимализмге, анимацияларға және мобильді құрылғыларға ыңғайлылыққа бағытталған.</p>
+    </div>
+    <div class="comments" data-article-id="7"></div>
+    <div class="add-comment">
+        <input type="text" placeholder="Пікір қосу..." onkeydown="if(event.key==='Enter'){addComment('7', this)}">
+        <button onclick="addComment('7', this.previousElementSibling)">Қосу</button>
+    </div>
+</div>
+
+<div class="article" data-category="webdesign" data-author="Максим Воробьёв">
+    <div class="author">
+        <img src="https://randomuser.me/api/portraits/men/40.jpg" alt="Максим Воробьёв">Максим Воробьёв
+        <div class="like-btn" onclick="toggleLike(this)">👍 <span>0</span></div>
+    </div>
+    <h2>Мобильді қосымшалар үшін UX/UI</h2>
+    <div class="article-content">
+        <img src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4" alt="UX UI">
+        <p>Дұрыс UX/UI пайдаланушылардың ұстап қалуын арттырады және қосымшалардағы конверсияны жақсартады.</p>
+    </div>
+    <div class="comments" data-article-id="8"></div>
+    <div class="add-comment">
+        <input type="text" placeholder="Пікір қосу..." onkeydown="if(event.key==='Enter'){addComment('8', this)}">
+        <button onclick="addComment('8', this.previousElementSibling)">Қосу</button>
+    </div>
+</div>
+
+<div class="article" data-category="webdesign" data-author="Светлана Козлова">
+    <div class="author">
+        <img src="https://randomuser.me/api/portraits/women/43.jpg" alt="Светлана Козлова">Светлана Козлова
+        <div class="like-btn" onclick="toggleLike(this)">👍 <span>0</span></div>
+    </div>
+    <h2>Адаптивті дизайн жасау</h2>
+    <div class="article-content">
+        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475" alt="Responsive">
+        <p>Адаптивті дизайн сайтты барлық құрылғыларда дұрыс көрсетуге мүмкіндік береді, функционалдылықты жоғалтпай.</p>
+    </div>
+    <div class="comments" data-article-id="9"></div>
+    <div class="add-comment">
+        <input type="text" placeholder="Пікір қосу..." onkeydown="if(event.key==='Enter'){addComment('9', this)}">
+        <button onclick="addComment('9', this.previousElementSibling)">Қосу</button>
+    </div>
+</div>
+
+<div class="article" data-category="ai" data-author="Дмитрий Соколов">
+    <div class="author">
+        <img src="https://randomuser.me/api/portraits/men/76.jpg" alt="Дмитрий Соколов">Дмитрий Соколов
+        <div class="like-btn" onclick="toggleLike(this)">👍 <span>0</span></div>
+    </div>
+    <h2>Қазіргі бизнесте ЖИ</h2>
+    <div class="article-content">
+        <img src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4" alt="AI Business">
+        <p>Жасанды интеллект компанияларға деректерді талдауға және процестердің тиімділігін арттыруға көмектеседі.</p>
+    </div>
+    <div class="comments" data-article-id="10"></div>
+    <div class="add-comment">
+        <input type="text" placeholder="Пікір қосу..." onkeydown="if(event.key==='Enter'){addComment('10', this)}">
+        <button onclick="addComment('10', this.previousElementSibling)">Қосу</button>
+    </div>
+</div>
+
+<div class="article" data-category="ai" data-author="Елена Громова">
+    <div class="author">
+        <img src="https://randomuser.me/api/portraits/women/50.jpg" alt="Елена Громова">Елена Громова
+        <div class="like-btn" onclick="toggleLike(this)">👍 <span>0</span></div>
+    </div>
+    <h2>ЖИ және генеративті модельдер</h2>
+    <div class="article-content">
+        <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8" alt="Generative AI">
+        <p>Генеративті ЖИ өнеркәсіпте, білім беру мен шығармашылықта жаңа мүмкіндіктер ашады.</p>
+    </div>
+    <div class="comments" data-article-id="11"></div>
+    <div class="add-comment">
+        <input type="text" placeholder="Пікір қосу..." onkeydown="if(event.key==='Enter'){addComment('11', this)}">
+        <button onclick="addComment('11', this.previousElementSibling)">Қосу</button>
+    </div>
+</div>
+
+<div class="article" data-category="ai" data-author="Алексей Никитин">
+    <div class="author">
+        <img src="https://randomuser.me/api/portraits/men/65.jpg" alt="Алексей Никитин">Алексей Никитин
+        <div class="like-btn" onclick="toggleLike(this)">👍 <span>0</span></div>
+    </div>
+    <h2>Робототехника және болашақ</h2>
+    <div class="article-content">
+        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475" alt="Robotics">
+        <p>Робототехника ЖИ арқасында өндіріс пен қызмет көрсету салаларын түбегейлі өзгертеді.</p>
+    </div>
+    <div class="comments" data-article-id="12"></div>
+    <div class="add-comment">
+        <input type="text" placeholder="Пікір қосу..." onkeydown="if(event.key==='Enter'){addComment('12', this)}">
+        <button onclick="addComment('12', this.previousElementSibling)">Қосу</button>
+    </div>
+</div>
+
+</main>
+
+  <aside class="top-cards">
+    <div class="top-card"><img src="https://static.tildacdn.com/tild6538-6365-4439-b731-636539323631/python.jpg" alt="Python, C#, Rust"><span>Python, C#, Rust</span></div>
+    <div class="top-card"><img src="https://kartinki.pics/uploads/posts/2021-01/thumbs/1611023078_27-p-fon-it-48.jpg" alt="5G, IoT, Blockchain"><span>5G, IoT, Blockchain</span></div>
+    <div class="top-card"><img src="https://i.pinimg.com/736x/c3/83/0f/c3830f1eb594733a5645702e4a224208.jpg" alt="UX/UI, HTML/CSS, Figma"><span>UX/UI, HTML/CSS, Figma</span></div>
+    <div class="top-card"><img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8" alt="Machine Learning, Generative AI, Robotics"><span>Machine Learning, Generative AI, Robotics</span></div>
+    <div class="top-card"><img src="https://img.freepik.com/premium-photo/futuristic-server-room-tunnel_629685-39173.jpg" alt="DevOps, Cybersecurity, VR/AR"><span>DevOps, Cybersecurity, VR/AR</span></div>
+    <div class="top-card"><img src="https://tse4.mm.bing.net/th/id/OIP.0EH24fPmkabCxQ76HfBaxwHaHa?cb=ucfimg2&ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Cloud Computing, SaaS"><span>Cloud Computing, SaaS</span></div>
+    <div class="top-card"><img src="https://img.freepik.com/premium-vector/trendy-colorful-fluid-gradient-shape-landing-page_53295-283.jpg?w=740" alt="Blockchain, NFT, Web3"><span>Blockchain, NFT, Web3</span></div>
+    <div class="top-card"><img src="https://img.freepik.com/premium-photo/cyberpunk-style-pattern-wallpaper-background_878402-15003.jpg" alt="AR/VR, Metaverse"><span>AR/VR, Metaverse</span></div>
+    <div class="top-card"><img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c" alt="Cybersecurity, Ethical Hacking"><span>Cybersecurity, Ethical Hacking</span></div>
+</aside>
+
+</div>
+</div>
+
+<script>
+const authorsByCategory = {
+  all: [
+    {name:"Иван Иванов", img:"https://randomuser.me/api/portraits/men/11.jpg"},
+    {name:"Павел Сидоров", img:"https://randomuser.me/api/portraits/men/12.jpg"},
+    {name:"Ольга Белова", img:"https://randomuser.me/api/portraits/women/61.jpg"},
+    {name:"Екатерина Петрова", img:"https://randomuser.me/api/portraits/women/68.jpg"},
+    {name:"Игорь Михайлов", img:"https://randomuser.me/api/portraits/men/55.jpg"},
+    {name:"Ирина Смирнова", img:"https://randomuser.me/api/portraits/women/25.jpg"},
+    {name:"Максим Воробьёв", img:"https://randomuser.me/api/portraits/men/40.jpg"},
+    {name:"Светлана Козлова", img:"https://randomuser.me/api/portraits/women/43.jpg"},
+    {name:"Дмитрий Соколов", img:"https://randomuser.me/api/portraits/men/76.jpg"},
+    {name:"Елена Громова", img:"https://randomuser.me/api/portraits/women/50.jpg"},
+    {name:"Алексей Никитин", img:"https://randomuser.me/api/portraits/men/65.jpg"},
+  ],
+  programming: [
+    {name:"Иван Иванов", img:"https://randomuser.me/api/portraits/men/11.jpg"},
+    {name:"Павел Сидоров", img:"https://randomuser.me/api/portraits/men/12.jpg"},
+    {name:"Ольга Белова", img:"https://randomuser.me/api/portraits/women/61.jpg"},
+  ],
+  tech: [
+    {name:"Екатерина Петрова", img:"https://randomuser.me/api/portraits/women/68.jpg"},
+    {name:"Игорь Михайлов", img:"https://randomuser.me/api/portraits/men/55.jpg"},
+    {name:"Ольга Белова", img:"https://randomuser.me/api/portraits/women/61.jpg"},
+  ],
+  webdesign: [
+    {name:"Ирина Смирнова", img:"https://randomuser.me/api/portraits/women/25.jpg"},
+    {name:"Максим Воробьёв", img:"https://randomuser.me/api/portraits/men/40.jpg"},
+    {name:"Светлана Козлова", img:"https://randomuser.me/api/portraits/women/43.jpg"},
+  ],
+  ai: [
+    {name:"Дмитрий Соколов", img:"https://randomuser.me/api/portraits/men/76.jpg"},
+    {name:"Елена Громова", img:"https://randomuser.me/api/portraits/women/50.jpg"},
+    {name:"Алексей Никитин", img:"https://randomuser.me/api/portraits/men/65.jpg"},
+  ]
+};
+
+const articles = Array.from(document.querySelectorAll('.article'));
+const categoryButtons = document.querySelectorAll('nav button');
+const authorsBar = document.getElementById('authorsBar');
+const searchInput = document.getElementById('searchInput');
+let likedArticles = {};
+
+function renderAuthors(category){
+  authorsBar.innerHTML='';
+  const authors = authorsByCategory[category] || [];
+  if(authors.length===0) return;
+  const label = document.createElement('div'); label.className='authors-label'; label.textContent='Авторлар:';
+  const list = document.createElement('div'); list.className='authors-list';
+  authors.forEach(a=>{
+      const img = document.createElement('img'); img.src=a.img; img.alt=a.name; img.title=a.name;
+      list.appendChild(img);
+  });
+  authorsBar.appendChild(label); authorsBar.appendChild(list);
+}
+
+function filterCategory(cat, btn){
+    articles.forEach(article=>{
+        article.style.display = cat==='all' || article.dataset.category===cat ? 'block':'none';
+    });
+    searchInput.value='';
+    categoryButtons.forEach(b=>b.classList.remove('active'));
+    if(btn) btn.classList.add('active');
+    renderAuthors(cat);
+}
+
+function toggleLike(el){
+    const span = el.querySelector('span');
+    const articleDiv = el.closest('.article');
+    const id = getArticleId(articleDiv);
+    likedArticles[id]=(likedArticles[id]||0)+1;
+    span.textContent = likedArticles[id];
+}
+function getArticleId(articleDiv){
+    const commentsDiv = articleDiv.querySelector('.comments');
+    return commentsDiv ? commentsDiv.getAttribute('data-article-id') : null;
+}
+
+function addComment(articleId, input){
+    const val = input.value.trim(); if(!val) return;
+    const commentsDiv = document.querySelector(`.comments[data-article-id="${articleId}"]`);
+    const users = [
+        {name:"Пайдаланушы", img:"https://randomuser.me/api/portraits/lego/1.jpg"},
+        {name:"Қонақ", img:"https://randomuser.me/api/portraits/lego/2.jpg"},
+        {name:"Аноним", img:"https://randomuser.me/api/portraits/lego/3.jpg"}
+    ];
+    const user = users[Math.floor(Math.random()*users.length)];
+    const commentDiv = document.createElement('div'); commentDiv.className='comment';
+    const img = document.createElement('img'); img.src=user.img; img.alt=user.name;
+    const textDiv = document.createElement('div'); textDiv.textContent=val;
+    commentDiv.appendChild(img); commentDiv.appendChild(textDiv);
+    commentsDiv.appendChild(commentDiv);
+    input.value='';
+}
+
+searchInput.addEventListener('input', ()=>{
+    const q = searchInput.value.toLowerCase();
+    articles.forEach(article=>{
+        const title = article.querySelector('h2').innerText.toLowerCase();
+        const text = article.querySelector('.article-content p').innerText.toLowerCase();
+        const author = article.dataset.author.toLowerCase();
+        const match = title.includes(q) || text.includes(q) || author.includes(q);
+        article.style.display = match ? 'block':'none';
+    });
+    categoryButtons.forEach(b=>b.classList.remove('active'));
+    authorsBar.innerHTML='';
+});
+
+filterCategory('all', document.querySelector('nav button.active'));
+</script>
+</body>
+</html>
